@@ -1,37 +1,51 @@
-from splinter import Browser
+from splinter import Browser                                         
 from bs4 import BeautifulSoup as bs
+import requests
 import time
 from webdriver_manager.chrome import ChromeDriverManager
+import pandas as pd
+from selenium import webdriver
 
 
-def scrape_info():
-    # Set up Splinter
+
+def init_browser():
     executable_path = {'executable_path': ChromeDriverManager().install()}
     browser = Browser('chrome', **executable_path, headless=False)
 
+def scrape_info():
+    browser = init_browser()
     
     url = "https://redplanetscience.com"
     browser.visit(url)
 
-    time.sleep(1)
+    
 
     # Scrape page into Soup
     html = browser.html
     soup = bs(html, "html.parser")
 
+    
+
    # get the latest news
-    article = soup.find('div', class_= 'list_text')
-    title = article.find('div', class_ = 'content_title').text
-    par = article.find('div', class_= 'article_teaser_body').text
+
+
+    data = soup.find("div", class_= "slide")
+
+    news_title = data.find('div', class_ = 'content_title').a.text
+    paragraph = data.find('div', class_= 'article_teaser_body').text
 
     
-    url = 'https://spaceimages-mars.com'
-    browser.visit(url)
+    img_url = 'https://spaceimages-mars.com'
+    browser.visit(img_url)
+
+    html= browser_html
     soup = bs(html, "html.parser")
 
-    featured_img = img_soup.find("img", class_ ="headerimage fade-in").get('src')
-    img_url = f'https://spaceimages-mars.com/{featured_img}'
+    image = soup.find("img", class_ ="headerimage fade-in").a["data-fancybox-href"]
 
+
+    featured_image_url = 'https://spaceimages-mars.com' + image
+    
      # Mars facts
     # get the url for Mars's facts 
     facts_url = "https://galaxyfacts-mars.com/"
@@ -95,7 +109,7 @@ def scrape_info():
         "paragraph" : paragraph,
         "featured_image_url": featured_image_url,
         "mars_weather": mars_weather,
-        "html_table": facts_html,
+        "table_html": table_html,
         "hemisphere_img_urls": hemisphere_img_urls
     }
 
